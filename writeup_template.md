@@ -24,8 +24,6 @@ The model that was created is [provided as the model.h5 file](model.h5).
 
 A recording of the model in action, running in the simluator was created is [provided as the video file](video.mp4).
 
----
-
 My project includes the following files:
 * [model.py](model.py) containing the script to create and train the model
 * [drive.py](drive.py) for driving the car in autonomous mode
@@ -39,7 +37,7 @@ This lesson is to use "real-world" data and apply deep learning techniques to pr
 ### 2. Data Set Summary
 
 The dataset shows a bias towards staying in the center of the lane as the car moves around the track. 
-[](example.jpg)
+![](example.jpg?raw=true)
 
 
 #### 1. An appropriate model architecture has been employed
