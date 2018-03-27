@@ -25,20 +25,12 @@ The model that was created is [provided as the model.h5 file](model.h5).
 A recording of the model in action, running in the simluator was created is [provided as the video file](video.mp4).
 
 ---
-### Files Submitted & Code Quality
-
-#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
 * [model.py](model.py) containing the script to create and train the model
 * [drive.py](drive.py) for driving the car in autonomous mode
 * [model.h5](model.h5) containing a trained convolution neural network 
 * This Readme.md summarizing the results
-
-#### 2. Submission includes functional code
-Functional Code is provided within the model.py file. It can be executed via: *python model.py
-
-### Model Architecture and Training Strategy
 
 #### 1. Project Overview
 
