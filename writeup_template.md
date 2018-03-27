@@ -97,6 +97,9 @@ The Nvidia uses a novel approach to its CNN training model as follows (In Keras 
 * Dense Fully Connected to 10
 * Dense Fully Connected to 1
 
+Copyright Nvidia--2018
+![](https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/cnn-architecture-624x890.png?raw=true)
+
 During model training, I used a loss function of MSE (mean square error) and the Adam Optimizer (learning rate not modified).
 
 #### Training Results
@@ -111,5 +114,10 @@ Another issue is GPU dependency. The Nvidia model must run on a high-end GPU to 
 
 ![](figure.png?raw=true)
 
+### Testing results
+
+Using the nvidia driving simulator, which consisted of using the trained model to output steer angles based on the real-time view of the center camera, I was able to test my model by driving in real-time at a fixed speed:
+![](https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/inference-624x132.png?raw=true)
+
 The resulting video of a single lap using my model can be viewed here:
-![](video.mp4)
+![](video.mp4?raw=true)
