@@ -1,33 +1,28 @@
-# **Behavioral Cloning** 
-
-## Writeup Template
-
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
-
 **Behavioral Cloning Project**
+
+This repository contains starting files for the Behavioral Cloning Project.
 
 The goals / steps of this project are the following:
 * Use the simulator to collect data of good driving behavior
+(Files stored in jpg format-- NOT to be uploaded)
+
 * Build, a convolution neural network in Keras that predicts steering angles from images
+This is [found here](model.py) as required in the rubric points. This model includes 3 different approaches, using AlexNet,LeNet, and Nvidia. From testing, the Nvidia model proved best and fastest.
+
 * Train and validate the model with a training and validation set
+I used the data [sample test provided by the lesson](https://d17h27t6h515a5.cloudfront.net/topher/2016/December/584f6edd_data/data.zip).
+
+I did augment the dataset by adding additional and performing transfer learning using the simiulator. These images are not included in the git repo, but can be identified in the driving_log.csv file.
+
+The udacity dataset was modified by removing the 1st line (header) of its driving_log.csv.
+
 * Test that the model successfully drives around track one without leaving the road
+
+The model that was created is [provided as the model.h5 file](model.h5).
+
 * Summarize the results with a written report
 
-
-[//]: # (Image References)
-
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
-
-## Rubric Points
-### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
+A recording of the model in action, running in the simluator was created is [provided as the video file](video.mp4).
 
 ---
 ### Files Submitted & Code Quality
@@ -35,22 +30,28 @@ The goals / steps of this project are the following:
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py containing the script to create and train the model
-* drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+* [model.py](model.py) containing the script to create and train the model
+* [drive.py](drive.py) for driving the car in autonomous mode
+* [model.h5](model.h5) containing a trained convolution neural network 
+* This Readme.md summarizing the results
 
 #### 2. Submission includes functional code
-Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
-```sh
-python drive.py model.h5
-```
-
-#### 3. Submission code is usable and readable
-
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+Functional Code is provided within the model.py file. It can be executed via: *python model.py
 
 ### Model Architecture and Training Strategy
+
+#### 1. Project Overview
+
+This lesson is to use "real-world" data and apply deep learning techniques to predict the correct steering angle needed to drive a car around a track. Of course, we use a simulator to generate this data, augment this data, and test our deep learning model. The model created is to identify what is the track lane (classification) in order to calculate a proper steering angle.
+
+### 2. Data Set Summary
+
+The dataset shows a bias towards staying in the center of the lane as the car moves around the track. 
+
+
+
+
+
 
 #### 1. An appropriate model architecture has been employed
 
