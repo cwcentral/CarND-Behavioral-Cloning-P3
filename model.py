@@ -178,9 +178,10 @@ def generator(samples, batch_size=128):
             yield sklearn.utils.shuffle(X_train, Y_train)
 	
 # Debug Helper
-def show_histogram(dataset, bins):
-    plt.figure(figsize=(5,5))
-    plt.hist(dataset, bins)
+def show_histogram(dataset, tbins):
+    plt.figure(figsize=(4,4))
+    plt.hist(dataset, tbins)
+    plt.show(block=True)
 
 # Debug Helper
 def show_image(img):
@@ -200,6 +201,14 @@ with open('./sim_data/driving_log.csv') as csvfile:
 		lines.append(line)
 
 # TODO read measurements and show a histogram
+zeros = 0
+idx = 0
+vis_angles = []
+new_lines = []
+bins = np.arange(-1, 1, 0.1, dtype=float) # fixed bin size
+for line in lines:
+        vis_angles.append(float(line[3]))
+show_histogram(vis_angles, bins)
 
 # Split the sample csv into test and validation set at 80/20
 print(len(lines))
