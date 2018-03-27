@@ -44,7 +44,7 @@ class SimplePIController:
 
 
 controller = SimplePIController(0.1, 0.002)
-set_speed = 9
+set_speed = 9 
 controller.set_desired(set_speed)
 
 
@@ -120,6 +120,7 @@ if __name__ == '__main__':
               ', but the model was built using ', model_version)
 
     model = load_model(args.model)
+    line_entry = 0
 
     if args.image_folder != '':
         print("Creating image folder at {}".format(args.image_folder))
