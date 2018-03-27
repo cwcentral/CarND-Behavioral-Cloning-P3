@@ -12,7 +12,7 @@ This is [found here](model.py) as required in the rubric points. This model incl
 * Train and validate the model with a training and validation set
 I used the data [sample test provided by the lesson](https://d17h27t6h515a5.cloudfront.net/topher/2016/December/584f6edd_data/data.zip).
 
-I did augment the dataset by adding additional and performing transfer learning using the simiulator. These images are not included in the git repo, but can be identified in the driving_log.csv file.
+I augmented the dataset by adding additional images and performing transfer learning using the simiulator. These images are not included in the git repo, but can be identified in the driving_log.csv file.
 
 The udacity dataset was modified by removing the 1st line (header) of its driving_log.csv.
 
