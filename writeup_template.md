@@ -56,17 +56,20 @@ The dataset shows a bias towards staying in the center of the lane as the car mo
 Looking at the sample dataset from driving, we noticed that the majority of time the car is moving straight & centered: the steering angle is zero most of the time. This doesn't give my model the best chance to identify patterns of when the car is going completely off track. The dataset size originally contained *24109* samples. Hence, data augmentation is needed.
 
 ![](hist_figure.png?raw=true)
-Variation in Dataset
+
+*Variation in Dataset*
 
 Images captured of the driving sequence are in 320x160x3 BGR format. We used all images available, center, left and right. In order to augment the steering measurement, I used the suggested **value of +- 0.2 radians** added for the steering angle of each left (<0) and right image (>0). This is shown in model.py line 139.
 
 ![](sim_data/IMG/right_2016_12_01_13_46_38_947.jpg?raw=true)
-Data Sample
+
+*Data Sample*
 
 To preprocess the images and make them more unique, I had to remove the sky and generic horizon features. Hence I cropped the image:
 
 ![](cropped.png?raw=true)
-Cropped Data Sample
+
+*Cropped Data Sample*
 
 I then performed the following image processing techniques to enhance the dataset and increase it 3x:
 * Image Flip
@@ -97,7 +100,8 @@ https://arxiv.org/pdf/1604.07316v1.pdf
 
 Nvidia's training pipeline is described here:
 ![](https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/training-624x291.png?raw=true)
-Copyright Nvidia--2018
+
+*Copyright Nvidia--2018*
 
 
 The Nvidia uses a novel approach to its CNN training model as follows (In Keras format):
@@ -117,7 +121,8 @@ The Nvidia uses a novel approach to its CNN training model as follows (In Keras 
 * Dense Fully Connected to 1
 
 ![](https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/cnn-architecture-624x890.png?raw=true)
-Copyright Nvidia--2018
+
+*Copyright Nvidia--2018*
 
 
 During model training, I used a loss function of MSE (mean square error) and the Adam Optimizer (learning rate not modified).
@@ -134,7 +139,8 @@ It appears underfitting is the main issue with this model. It can use more data.
 
 Another issue is GPU dependency. The Nvidia model must run on a high-end GPU to finish in sufficient time. I also got varying results on different GPUs when generating a model. On a GTX760, though I had loss errors under 2%, training would produce a bad model and the car would drive off randomly in turns, i.e. training multiple times produced inconsistent models. On a GTX1080 though, I got (fast training and) consistent models and results.
 
-MSE Loss from Training
+*MSE Loss from Training*
+
 ![](figure.png?raw=true)
 
 ### Testing results
@@ -143,7 +149,8 @@ Using the nvidia driving simulator, that used my trained model, to output steer 
 
 Nvidia Driving Simulator (drive.py)
 ![](https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/inference-624x132.png?raw=true)
-Copyright Nvidia--2018
+
+*Copyright Nvidia--2018*
 
 The resulting video of a single lap using my model can be viewed here:
 [video-result](video.mp4?raw=true)
