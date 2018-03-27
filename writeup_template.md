@@ -153,7 +153,7 @@ Nvidia Driving Simulator (drive.py)
 *Copyright Nvidia--2018*
 
 The resulting video of a single lap using my model can be viewed here:
-[video-result](video.mp4?raw=true)
+[video-result](video.mp4?raw=true) or [here (youtube)](https://youtu.be/272J__Cajds)
 
 NOTE: The trained model was executed on the simulator in 320x240 mode, with fastest rendering quality setting on **track 1**.
 
