@@ -37,7 +37,7 @@ This lesson is to use "real-world" data and apply deep learning techniques to pr
 ### 2. Data Set Summary
 
 The dataset shows a bias towards staying in the center of the lane as the car moves around the track. 
-![](example.png?raw=true)
+![](example.jpg?raw=true)
 
 
 #### 1. An appropriate model architecture has been employed
