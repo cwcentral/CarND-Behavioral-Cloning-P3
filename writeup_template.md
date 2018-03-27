@@ -120,4 +120,4 @@ Using the nvidia driving simulator, which consisted of using the trained model t
 ![](https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/inference-624x132.png?raw=true)
 
 The resulting video of a single lap using my model can be viewed here:
-![](video.mp4?raw=true)
+[video-result](video.mp4?raw=true)
