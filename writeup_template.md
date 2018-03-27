@@ -1,30 +1,29 @@
-**Behavioral Cloning Project**
+# **Behavioral Cloning Project**
 
-This repository contains starting files for the Behavioral Cloning Project.
+This repository contains software for the Behavioral Cloning Project.
 
 The goals / steps of this project are the following:
 * Use the simulator to collect data of good driving behavior
+
 (Files stored in jpg format-- NOT to be uploaded)
-
 * Build, a convolution neural network in Keras that predicts steering angles from images
+
 This is [found here](model.py) as required in the rubric points. This model includes 3 different approaches, using AlexNet,LeNet, and Nvidia. From testing, the Nvidia model proved best and fastest.
-
 * Train and validate the model with a training and validation set
+
 I used the data [sample test provided by the lesson](https://d17h27t6h515a5.cloudfront.net/topher/2016/December/584f6edd_data/data.zip).
-
 I augmented the dataset by adding additional images and performing transfer learning using the simiulator. These images are not included in the git repo, but can be identified in the driving_log.csv file.
-
-The udacity dataset was modified by removing the 1st line (header) of its driving_log.csv.
-
+Note: The udacity dataset was modified by removing the 1st line (header) of its driving_log.csv.
 * Test that the model successfully drives around track one without leaving the road
 
 The model that was created is [provided as the model.h5 file](model.h5).
-
 * Summarize the results with a written report
 
 A recording of the model in action, running in the simluator was created is [provided as the video file](video.mp4).
 
-My project includes the following files:
+### Rubric Points (included files)
+What is included in this project (git repo) are
+
 * [model.py](model.py) containing the script to create and train the model
 * [drive.py](drive.py) for driving the car in autonomous mode
 * [model.h5](model.h5) containing a trained convolution neural network 
@@ -32,86 +31,85 @@ My project includes the following files:
 
 #### 1. Project Overview
 
-This lesson is to use "real-world" data and apply deep learning techniques to predict the correct steering angle needed to drive a car around a track. Of course, we use a simulator to generate this data, augment this data, and test our deep learning model. The model created is to identify what is the track lane (classification) in order to calculate a proper steering angle.
+This lesson is to use collected data and apply deep learning techniques to determine the correct steering angle needed to drive a car around a track. Of course, we use a simulator to generate this data, develop training/validation datasets, augment this data, and create/test our deep learning model. The model created identifies what is the track lane (classification of features) in order to calculate a proper steering angle.
 
 ### 2. Data Set Summary
 
-The dataset shows a bias towards staying in the center of the lane as the car moves around the track. 
+The dataset shows a bias towards staying in the center of the lane as the car moves around the track. We focused on keeping the car in the center of the lane. Left and right image views are generated to provide the model with means to get back to the center of the lane.
+
 ![](example.jpg?raw=true)
 
+#### Exploratory visualization of the dataset and Data Set Preprocessing
 
-#### 1. An appropriate model architecture has been employed
+Looking at the sample dataset from driving, we noticed that the majority of time the car is moving straight, the steering angle is zero most of the time. This doesn't give my model the best chance to identify patterns of when the car is going completely off track. The dataset size originally contained *24109* samples. Hence, data augmentation is needed.
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+![](hist_figure.png?raw=true)
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+Images captured of the driving sequence are in 320x160x3 BGR format. We used all images available, center, left and right. In order to augment the steering measurement, I used the suggested **value of +- 0.2 radians** added for the steering angle of each left (<0) and right image (>0).
 
-#### 2. Attempts to reduce overfitting in the model
+![](sim_data/IMG/right_2016_12_01_13_46_38_947.jpg?raw=true)
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+To preprocess the images and make them more unique, I had to remove the sky and generic horizon features. Hence I cropped the image:
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+![](cropped.png?raw=true)
 
-#### 3. Model parameter tuning
+I also performed the following image processing techniques to enhance the dataset and increase it 3x:
+* Image flip
+* image Blue
+* Image Rotate +- 30 degrees
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+I also developed a training and validation datasets from the single sample set, and used a 80/20 split rule as suggested in the project lessons. 80% of the shuffled data was designated test data and 20% validation.
 
-#### 4. Appropriate training data
+Lastly in order to smoothly process the data, which could require up to 8GB or memory--not available on my computing platform, I had to implement python generators, which allow me to batch read image data as it was being processed by the model. My batch size was 16 images (3x). In each generator, I would used:
+* add to sample set center, left and right images
+* added steering angle offset per left and right image
+* perform image augemntation as described above.
+* shuffle the dataset
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+Due to the poor performance I found with the LeNet and AlexNet architectures, as well as initial underfitting of the Nvidia architecture, I added additional data by driving in the simulator in troubled areas to capture driving technique. I by  transferred learning techniques, I added the images and steering samples to the dataset.
 
-For details about how I created the training data, see the next section. 
+### 3. Model Architecture and Training Strategy
 
-### Model Architecture and Training Strategy
+Using Keras, I initially tested the LeNet Architecture, which ended up having the car immediately drive off the road during testing. During training on LeNet, though used successfully in the previouos project, I could not get the loss values under 6% as well as it was overfitting the data. I then tried AlexNet Architecture, though successful half way down the track, eventually hit a wall consistently, and consumed a lot of GPU processing. The training model would get loss values down to 3% and some under fitting, but took more gpu/cpu time to test. As in the lesson, the Nvidia Architecture was suggested and hence used that model with good success.
 
-#### 1. Solution Design Approach
+The Nvidia Architecture is described here:
+https://devblogs.nvidia.com/deep-learning-self-driving-cars/
 
-The overall strategy for deriving a model architecture was to ...
+And a paper was published here:
+https://arxiv.org/pdf/1604.07316v1.pdf
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+Nvidia's training pipeline is described here:
+![](https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/training-624x291.png?raw=true)
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
+The Nvidia uses a novel approach to its CNN training model as follows (In Keras format):
 
-To combat the overfitting, I modified the model so that ...
+* Input 360x120 
+* Image Crop ((47,0), (0,0)) -- output 360x73x3 (altered from Nvidia's 200x66x3) 
+* Normalization
+* Convolution+RELU -- Input 360x73x3, Output: 178x35x24
+* Convolution+RELU -- Input 178x34x24, Output: 87x16x36
+* Convolution+RELU -- Input 87x16x36, Output: 42x6x48
+* Convolution+RELU -- Input 42x6x48, Output: 40x4x64
+* Convolution+RELU -- Input 40x4x64, Output: 38x2x64
+* Flatten (Fully Connect)
+* Dense Fully Connected to 100
+* Dense Fully Connected to 50
+* Dense Fully Connected to 10
+* Dense Fully Connected to 1
 
-Then I ... 
+During model training, I used a loss function of MSE (mean square error) and the Adam Optimizer (learning rate not modified).
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+#### Training Results
 
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+Intially with no cropping, no data augmentation, the model training proved acceptable, with loss on both test and validation under 3%, but would converge quickly and diverge quickly. After the modification to the model & preprocessing, I was able to get loss under 2%, but was seeing some underfitting in the data. Also the car would sometimes rub against walls after a sharp turn. Hence I when back to the simulator and collected more data on those areas. I was able to train a model that provided under 2% loss error, good fitting and sufficient under 7 epochs.
 
-#### 2. Final Model Architecture
+* What are some problems with the architecture?
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+It appears underfitting is the main issue with this mode. It likely requires more data. Lastly, though I did not use the Nvidia recommended 200x66 image size, I was able to speed up the process by a crop operation instead.
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
+Another issue is GPU dependency. The Nvidia model must run on a high-end GPU to finish in sufficient time. I also got varying results on different GPUs when generating a model. On a GTX760, though I had loss errors under 2%, training would produce a bad model and the car would drive off randomly in turns, i.e. training multiple times produced inconsistent models. On a GTX1070, I got (fast training and) consistent models and results.
 
-![alt text][image1]
+![](figure.png?raw=true)
 
-#### 3. Creation of the Training Set & Training Process
-
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
-
-![alt text][image2]
-
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+The resulting video of a single lap using my model can be viewed here:
+![](video.mp4)
