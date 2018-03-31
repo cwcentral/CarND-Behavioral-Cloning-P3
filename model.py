@@ -17,9 +17,10 @@ from keras.models import Model
 from keras.models import Sequential
 from keras.layers.core import Flatten, Dense, Dropout, Lambda
 from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2D
-from keras.optimizers import SGD
+from keras.optimizers import SGD,Adam
 from keras.applications.vgg16 import VGG16
 from keras.layers import Cropping2D
+
 
 #
 # VGG 16 model
@@ -79,21 +80,32 @@ def lenet_model():
 # https://arxiv.org/pdf/1604.07316v1.pdf
 #
 def nvidia_model():
+     
+        # resize to nvidia model req's
+	def resize_img(img):
+		import tensorflow as tf
+		return tf.image.resize_images(img, (66, 200))
+
 	model = Sequential()
+
+        # normalize
 	model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
-	#
-	# Crop the image to get rid of the sky and most tall trees.
-	model.add(Cropping2D(cropping=((47,0),(0,0))))
+
+        # take a lot of sky out and focuses on the road
+	model.add(Cropping2D(cropping=((57,5),(1,1))))
+
+	model.add(Lambda(resize_img))
+
 	model.add(Convolution2D(24, 5, 5, subsample=(2,2),activation='relu'))
 	model.add(Convolution2D(36, 5, 5, subsample=(2,2),activation='relu'))
 	model.add(Convolution2D(48, 5, 5, subsample=(2,2),activation='relu'))
 	model.add(Convolution2D(64, 3, 3, activation='relu'))
 	model.add(Convolution2D(64, 3, 3, activation='relu'))
+	model.add(Dropout(0.5))  
 	model.add(Flatten())
+	model.add(Dropout(0.5)) 
 	model.add(Dense(100))
-	#model.add(Dropout(0.6))  # never worked right in practice
 	model.add(Dense(50))
-	#model.add(Dropout(0.6))  # never worked right in practice
 	model.add(Dense(10))
 	model.add(Dense(1))
 	return model
@@ -115,7 +127,6 @@ def process_image(img):
 #
 def generator(samples, batch_size=128):
     num_samples = len(samples)
-    print("samples: " + str(num_samples))
 
     while 1: # Loop forever so the generator never terminates
         random.shuffle(samples)
@@ -141,11 +152,14 @@ def generator(samples, batch_size=128):
                 steering_right = steering_center - correction
 
 		# add augmented data
-                images.extend([process_image(cv2.imread(current_path)), 
+                if abs(steering_center) <= 0.02:
+                    images.extend([process_image(cv2.imread(current_path))])
+                    measurements.extend([steering_center])
+                else: 
+                    images.extend([process_image(cv2.imread(current_path)), 
                 		process_image(cv2.imread(left_current_path)),
                 		process_image(cv2.imread(right_current_path))])
-
-                measurements.extend([steering_center, steering_left, steering_right])
+                    measurements.extend([steering_center, steering_left, steering_right])
 
 	    # Augment with MORE data
             # trim image to only see section with road
@@ -155,23 +169,24 @@ def generator(samples, batch_size=128):
                 augmented_images.append(im)
                 augmented_measurements.append(meas)
 
-		# Flip as suggested by lesson
-                augmented_images.append(cv2.flip(im,1))
-                augmented_measurements.append(-1.0*meas)
+                if True:
+		    # Flip as suggested by lesson
+                    augmented_images.append(cv2.flip(im,1))
+                    augmented_measurements.append(-1.0*meas)
+    
+		    # blur
+                    blur_in = cv2.GaussianBlur(im, (5,5), 10.0)
+                    augmented_images.append(blur_in)
+                    augmented_measurements.append(meas)
 
-		# blur
-                blur_in = cv2.GaussianBlur(im, (5,5), 30.0)
-                augmented_images.append(blur_in)
-                augmented_measurements.append(meas)
-
-		# rotate
-                rot = random.randint(-30, 30)
-                rows,cols,dep = im.shape
-                M = cv2.getRotationMatrix2D((cols/2,rows/2),rot,1)
-                im = cv2.warpAffine(im, M, (im.shape[0], im.shape[1]))
-                augmented_images.append(np.resize(im, (160,320,3)))
-                augmented_measurements.append(meas)
-
+		    # rotate
+                    #rot = random.randint(-10, 10)
+                    #rows,cols,dep = im.shape
+                    #M = cv2.getRotationMatrix2D((cols/2,rows/2),rot,1)
+                    #im = cv2.warpAffine(im, M, (im.shape[0], im.shape[1]))
+                    #augmented_images.append(np.resize(im, (160,320,3)))
+                    #augmented_measurements.append(meas)
+    
 	    # assign and shuffle
             X_train = np.array(augmented_images)
             Y_train = np.array(augmented_measurements)
@@ -196,11 +211,25 @@ def show_image(img):
 # Get all measurements
 lines = []
 with open('./sim_data/driving_log.csv') as csvfile:
-	reader = csv.reader(csvfile)
-	for line in reader:
-		lines.append(line)
+        reader = csv.reader(csvfile)
+        for line in reader:
+            # create a even distribution of staying on the road.
+            # there's a lot of steering 0, so we take that out
 
-# TODO read measurements and show a histogram
+            # if there's hard steering, we want this
+            if abs(float(line[3])) >= 0.5:
+                lines.append(line)
+            # if there's minor steering, we want some of it
+            elif abs(float(line[3])) >= 0.1:
+                rot = random.randint(0, 10)
+                if rot == 1:
+                    lines.append(line)
+            # if there's no steering, we want little of it
+            else:
+                rot = random.randint(0, 30)
+                if rot == 1:
+                    lines.append(line)
+
 zeros = 0
 idx = 0
 vis_angles = []
@@ -228,8 +257,11 @@ model = nvidia_model()
 model.compile(loss='mse', optimizer='adam')
 
 # Run it
-history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator, 
-            nb_val_samples=len(validation_samples), nb_epoch=7) 
+# Set batchsize = num of augmented images * set numnber that greater than sample set
+SAM_SZ=5*192
+# 15 epoches
+EP=15
+history_object = model.fit_generator(train_generator, samples_per_epoch=SAM_SZ, validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=EP) 
 
 # Save it
 print("saving model")
