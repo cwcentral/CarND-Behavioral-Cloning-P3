@@ -155,7 +155,7 @@ Nvidia Driving Simulator (drive.py)
 The resulting video of a single lap using my model can be viewed here:
 [video-result](video.mp4?raw=true) or [here (youtube)](https://youtu.be/kaOAPWv1UOM)
 
-For extracurricular, here is my model [used on **track #2** (youtube)](https://youtu.be/iK51i5PQVJc)  Note is finished about 80% of the way. Not too bad.
+For extracurricular, here is my model [used on **track #2** (youtube)](https://youtu.be/iK51i5PQVJc)  Note, it finished about 90% of the way and needs more training on the very sharp turns. Not too bad.
 
 NOTE: The trained model was executed on the simulator in VGA mode, with fastest rendering quality setting on **track 1**.
 
