@@ -114,7 +114,9 @@ The Nvidia uses a novel approach to its CNN training model as follows (In Keras 
 * Convolution+RELU -- Input 87x16x36, Output: 42x6x48
 * Convolution+RELU -- Input 42x6x48, Output: 40x4x64
 * Convolution+RELU -- Input 40x4x64, Output: 38x2x64
+* Dropout (prob @ 50%)
 * Flatten (Fully Connect)
+* Dropout (prob @ 50%)
 * Dense Fully Connected to 100
 * Dense Fully Connected to 50
 * Dense Fully Connected to 10
